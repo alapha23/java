@@ -40,11 +40,6 @@ class Tennis
 			archiveOneGame(winStatus);
 		checkSetStatus();
 	}
-	static void checkSetStatus()
-	{
-		/* left win */
-		/* tie */
-	}
 	static int increaseScore(char winner)
 	{
 		/* this function might result in end of one game in a set */
@@ -101,6 +96,18 @@ class Tennis
 		scoreL = scoreR = 0;
 		ifDeuce = 0;
 	}
+	static void checkSetStatus()
+	{
+		/* win */
+		if(setL >= 6|| setR >= 6)
+		{
+			/* tie */
+			if()
+
+			/* no tie */
+		}
+	}
+
 	static void archiveSet(int winner)
 	{
 		/* winner = 1 for left wins */
