@@ -2,6 +2,7 @@ import java.util.*;
 
 class Tennis
 {
+	static Scanner sc = new Scanner(System.in);
 	static String current="";
 	static char match;	/* deciding set: tie break in US, advantage set in australia */
 	static char gender;	/* men: best of 5, women: best of 3 */
@@ -9,6 +10,7 @@ class Tennis
 	static int setR=0;
 	static int scoreL=0;
 	static int scoreR=0;
+	static int round=1;
 
 	static int ifDeuce=0;	/* 1 for 40A-xx, 2 for xx-40A*/
 
@@ -95,22 +97,42 @@ class Tennis
 		scoreL = scoreR = 0;
 		ifDeuce = 0;
 	}
-	static void checkSetStatus()
+	static int checkSetStatus()
 	{
+		int winner = 0;
 		/* win */
 		if(setL >= 6|| setR >= 6)
 		{
+			if(setL-setR>=2 || setR-setL>=2)
+			{
+				/* no tie--> someone wins the set by 6-x or 7-5*/
+				winner = setL>setR?1:2;
+				/* archive set */
+				archiveSet(winner);
+				/* win match */
+				return winner;
+			}
+			/* no tie --> 6-5 */
+			if(setL == 6|| setR == 6)
+				return winner;
 			/* tie */
-			/* if deciding set: */
+			if(setL == setR && setR == 6)
+			{
+				if((gender =='M' && round == 5)||(gender=='F'&&round==3))
+				{
+				/* if deciding set: */
 				/* invoke tie-breaker under US open */
 				/* advantage set under Australia open */
-			/* if not deciding set*/
+				}else
+				{
+				/* if not deciding set*/
 				/* tie-breaker */
-
-			/* no tie--> someone wins */
-			/* archive set */
-			/* win match */
+				}
+			}
+			System.out.println("We should never get here");
+			System.exit(0);
 		}
+		return winner;
 	}
 
 	static void archiveSet(int winner)
@@ -123,12 +145,19 @@ class Tennis
 		setL = setR = 0;
 		/* reset deuce bit */
 		ifDeuce = 0;
+		/* next round */
+		round++;
+	}
+
+	static void gameEnd(int winner)
+	{
+		archiveSet(0);
+		System.out.printf("%s\n", current);
+		System.out.println("Game finished!");
 	}
 
 	public static void main(String args[])
 	{
-		Scanner sc = new Scanner(System.in);		
-
 		/* read input and decide game type */
 		System.out.print("Type the match (A: Australian Open/U: US Open): ");
 		match = sc.next().charAt(0);
@@ -145,19 +174,22 @@ class Tennis
 			System.out.printf("Female chosen.\n");
 
 		initCurrent();
-int counter = 60;
-		while(counter>0)
+		while(true)
 		{
 			char winner;
+			int setStatus;
 
 			emitCurrent();
 			System.out.print("Type the winner (L: Left/R: Right): ");
 			winner = sc.next().charAt(0);
 
 			wins(winner);
-			checkSetStatus();
-
-			counter--;
+			setStatus = checkSetStatus();
+			if(setStatus!=0)
+			{
+				gameEnd(setStatus);
+				break;
+			}
 		}
 
 		sc.close();
