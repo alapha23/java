@@ -3,8 +3,8 @@ import java.util.*;
 class Tennis
 {
 	static String current="";
-	static char match;
-	static char gender;
+	static char match;	/* deciding set: tie break in US, advantage set in australia */
+	static char gender;	/* men: best of 5, women: best of 3 */
 	static int setL=0;	/* how many games left won in latest set */
 	static int setR=0;
 	static int scoreL=0;
@@ -38,7 +38,6 @@ class Tennis
 
 		if(winStatus != 0)
 			archiveOneGame(winStatus);
-		checkSetStatus();
 	}
 	static int increaseScore(char winner)
 	{
@@ -102,9 +101,15 @@ class Tennis
 		if(setL >= 6|| setR >= 6)
 		{
 			/* tie */
-			if()
+			/* if deciding set: */
+				/* invoke tie-breaker under US open */
+				/* advantage set under Australia open */
+			/* if not deciding set*/
+				/* tie-breaker */
 
-			/* no tie */
+			/* no tie--> someone wins */
+			/* archive set */
+			/* win match */
 		}
 	}
 
@@ -140,7 +145,7 @@ class Tennis
 			System.out.printf("Female chosen.\n");
 
 		initCurrent();
-int counter = 30;
+int counter = 60;
 		while(counter>0)
 		{
 			char winner;
@@ -150,6 +155,8 @@ int counter = 30;
 			winner = sc.next().charAt(0);
 
 			wins(winner);
+			checkSetStatus();
+
 			counter--;
 		}
 
