@@ -11,6 +11,7 @@ class Tennis
 	static int scoreL=0;
 	static int scoreR=0;
 	static int round=1;
+	static int roundLWin=0;
 
 	static int ifDeuce=0;	/* 1 for 40A-xx, 2 for xx-40A*/
 
@@ -97,6 +98,25 @@ class Tennis
 		scoreL = scoreR = 0;
 		ifDeuce = 0;
 	}
+	static int checkCompetition()
+	{
+		/* return 0 if game still continues */
+		/* return 1 if someone wins  */
+		if((gender=='M'&&round>=4)||(gender=='F'&&round>=3))
+		{
+			if(gender=='M'&&roundLWin>=3)
+				return 1;
+			if(gender=='M'&&(round-roundLWin)>=4)
+				return 1;
+			if(gender=='F'&&roundLWin>=2)
+				return 1;
+			if(gender=='F'&&(round-roundLWin)>=3)
+				return 1;
+			return 0;
+		}
+		else
+			return 0;
+	}
 	static int checkSetStatus()
 	{
 		int winner = 0;
@@ -107,38 +127,133 @@ class Tennis
 			{
 				/* no tie--> someone wins the set by 6-x or 7-5*/
 				winner = setL>setR?1:2;
-				/* archive set */
+				/* win set, archive set */
 				archiveSet(winner);
-				/* win match */
-				return winner;
+				/* check if someone win match */
+				return checkCompetition();
 			}
-			/* no tie --> 6-5 */
-			if(setL == 6|| setR == 6)
-				return winner;
 			/* tie */
 			if(setL == setR && setR == 6)
 			{
 				if((gender =='M' && round == 5)||(gender=='F'&&round==3))
 				{
 				/* if deciding set: */
-				/* invoke tie-breaker under US open */
-				/* advantage set under Australia open */
+					if(match == 'U')
+					{
+					/* invoke tie-breaker under US open */
+						tieBreaker();
+						return 1;
+					}
+					/* advantage set under Australia open */
+					else
+					{
+						advantageSet();
+						return 1;
+					}
 				}else
 				{
-				/* if not deciding set*/
-				/* tie-breaker */
+					/* if not deciding set*/
+					/* tie-breaker */
+					tieBreaker();
+					return checkCompetition();
 				}
 			}
-			System.out.println("We should never get here");
-			System.exit(0);
+			/* no tie --> 6-5 */
+			if(setL == 6|| setR == 6)
+				/* not the end of whole game */
+				return 0;
 		}
 		return winner;
 	}
+	static void tieBreaker()
+	{
+		/* happens when 6-6 */
+		/* Australia open last set don't have tie break */
+		int winner;
+		scoreL = 0;
+		scoreR = 0;
+		ifDeuce = 0;
+
+		emitCurrent();
+		while(true)
+		{
+			winner = read_();
+			if(winner == 'L')
+				scoreL++;
+			else	scoreR++;
+
+			/* Someone wins 7 games */
+			if(scoreL >= 7 || scoreR >= 7)
+			{
+				if(scoreL-scoreR > 2|| scoreR-scoreL > 2)
+				{
+					/* Someone exceed by 2 */
+					if(scoreL-scoreR >= 2)
+					{				
+						setL++;
+						/* archive set */
+						roundLWin++;
+						/* update current string */
+						current = String.format("%s %d-%d(%d-%d)", current, setL, setR, scoreL, scoreR);
+						/* reset set & score */
+						setL = setR = 0;
+						/* next round */
+						scoreL = scoreR = 0;
+						ifDeuce = 0;
+						round++;
+					}else if(scoreR - scoreL >= 2)
+					{
+						setR++;
+						/* update current string */
+						current = String.format("%s %d-%d(%d-%d)", current, setL, setR, scoreL, scoreR);
+						/* reset set & score */
+						setL = setR = 0;
+						/* next round */
+						scoreL = scoreR = 0;
+						ifDeuce = 0;
+						round++;
+					}
+					break;
+				}
+			}
+			emitCurrent();
+		}
+	}
+	static void advantageSet()
+	{
+		/* only happens in deciding set of Australia */
+		/* continues until one teams wins 6 games and lead by 2 games */
+		/* it differs to tie-break as advantage set counts by games */
+		/* play final set until someone gets a 2 game lead */
+		int winner;
+
+		while(true)
+		{
+			emitCurrent();
+			winner = read_();
+			wins((char)winner);
+
+			if(setL-setR >= 2 )
+			{
+				winner = 1;
+				break;
+			}
+			else if( setR-setL>=2)	
+			{
+				winner = 2;
+				break;
+			}
+		}
+		current = String.format("%s %d-%d", current, setL, setR);
+
+	}
+
 
 	static void archiveSet(int winner)
 	{
-		/* winner = 1 for left wins */
-
+		/* winner = 1 for left wins, 2 for right */
+		if(winner==1)
+			roundLWin++;
 		/* update current string */
 		current = String.format("%s %d-%d", current, setL, setR);
 		/* reset set & score */
@@ -151,9 +266,15 @@ class Tennis
 
 	static void gameEnd(int winner)
 	{
-		archiveSet(0);
 		System.out.printf("%s\n", current);
 		System.out.println("Game finished!");
+	}
+	static char read_()
+	{
+		char winner;
+		System.out.print("Type the winner (L: Left/R: Right): ");
+		winner = sc.next().charAt(0);
+		return winner;
 	}
 
 	public static void main(String args[])
@@ -176,14 +297,11 @@ class Tennis
 		initCurrent();
 		while(true)
 		{
-			char winner;
 			int setStatus;
 
 			emitCurrent();
-			System.out.print("Type the winner (L: Left/R: Right): ");
-			winner = sc.next().charAt(0);
+			wins(read_());
 
-			wins(winner);
 			setStatus = checkSetStatus();
 			if(setStatus!=0)
 			{
