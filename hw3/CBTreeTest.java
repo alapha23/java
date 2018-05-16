@@ -4,8 +4,7 @@ public class CBTreeTest
 	{
 //		CBTree cbt = new CBTree("0101011", "TCS");
 		CBTree cbt = new CBTree("00011101011", "ABCDE");
-		CBNode root = cbt.root;
-
+/*		CBNode root = cbt.root;
 		System.out.print("root: ");
 		root.printNode();
 		System.out.print("left of root: ");
@@ -26,12 +25,10 @@ public class CBTreeTest
 		System.out.print("right of 6: ");
 		root.right.right.printNode();
 		System.out.print("left of 8: ");
-		root.right.left.left.printNode();
+		root.right.right.left.printNode();
 		System.out.print("right of 8: ");
 		root.right.right.right.printNode();
-
-
-	
+*/
 
 		System.out.println(cbt.postOrderTraversal());	// good to go
 		System.out.println(cbt.inOrderTraversal());
@@ -40,7 +37,7 @@ public class CBTreeTest
 
 //		cbt.preOrder(cbt.root);
 //		System.out.println();
-		cbt.preOrderC(cbt.root);
+//		cbt.preOrderC(cbt.root);
 
 	}
 }

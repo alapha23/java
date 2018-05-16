@@ -48,15 +48,14 @@ public class CBTree {
 	{
 		if (n!=null)
 		{
-			System.out.println("node id "+n.id);
 			String a = inOrderT(n.left);
-			String ret = ""+n.id;
+			String ret = ""+n.character;
 			String b = inOrderT(n.right);
-		/*	
-		 *	if(a.equals("1"))	a = "";
+			
+		 	if(a.equals("1"))	a = "";
 			if(b.equals("1"))	b = "";
 			if(ret.equals("1"))	ret = "";
-		*/	return a+ret+b;
+			return a+ret+b;
 		}
 		return "";
 	}
@@ -70,7 +69,7 @@ public class CBTree {
 		if(a.equals("1"))	a = "";
 		if(b.equals("1"))	b = "";
 		if(ret.equals("1"))	ret = "";
-		return a+ret+b;
+		return a+b+ret;
 	}
 	private String postTS(CBNode n)
 	{
@@ -79,7 +78,7 @@ public class CBTree {
 		String a= postTS(n.left);
 		String b= postTS(n.right);
 		String ret = ""+n.label;
-		return a+ret+b;
+		return a+b+ret;
 	}
 	private String inOrderTS(CBNode n)
 	{
@@ -110,34 +109,21 @@ public class CBTree {
 		String newst=st;
 		String argu[] = new String[2];
 
-		n.printNode();
-
-			if(n.id == 6)
-				System.out.println(st);
-		if(st.charAt(0) == '0')
+		if(n.label == '0')
 		{
-//			if(n.id == 6)
-//				System.out.println(st);
-
-			if(newst.charAt(0)=='0')
+			if(st.charAt(0) == '0')
 			{
 				newNode(newst.charAt(0), newcon.charAt(0), temp);
-				n.left = temp;
-
 				newcon = newcon.substring(1, newcon.length());
-				newst = newst.substring(1, newst.length());
-				argu = conHelper(newst, newcon, n.left);
-				newst = argu[0];
-				newcon = argu[1];
-			}
-			else
-			{
-				newNode(newst.charAt(0), '1', temp);
-				newst = newst.substring(1, newst.length());
-				n.left = temp;
-			}
+			}else	newNode(newst.charAt(0), '1', temp);
+			n.left = temp;
+			newst = newst.substring(1, newst.length());
+			argu = conHelper(newst, newcon, n.left);
+			newst = argu[0];
+			newcon = argu[1];
 			
 			temp = new CBNode();
+
 			if(newst.charAt(0)=='0')
 			{
 				newNode(newst.charAt(0), newcon.charAt(0), temp);
@@ -154,51 +140,11 @@ public class CBTree {
 				n.right = temp;
 			}
 		}
-		else
-		{
-			int count=0;
-			if(n.left==null)
-			{
-				newNode(st.charAt(0), '1', temp);
-				newst = newst.substring(1, newst.length());
-				n.left = temp;
-				count++;
-			}
-			if(n.right==null&&count==0)
-			{
-				CBNode temp2 = new CBNode();
-				newNode(newst.charAt(0), '1', temp2);
-				newst = newst.substring(1, newst.length());
-				n.right = temp2;
-			}
-			if(count !=0)
-			{
-				conHelper(newst, newcon, n);
-			}
-		}
 
 		argu[0] = newst;
 		argu[1] = newcon;
 		return argu;
 	}
-
-/*	private int recursion(CBNode node) {
-		char next = string.getNext();
-		int val = 1;
-		if (next == 0) {
-			node.character = characterlistStuff.next();
-			node.label = 0;
-			node.left = new CBNode();
-			val += recurtion(node.left);
-
-			node.right = new CBNode();
-			val += recurtion(node.right);
-		} else 	{
-			node.label = 1;
-		}
-		return val;
-	}
-*/
 
 	private void constructTree2(String st, String con)
 	{
