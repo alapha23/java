@@ -2,7 +2,7 @@ import java.util.*;
 import java.io.*;
 class Maze
 {
-	public static void main (String args[])
+	public static void main (String args[]) throws FileNotFoundException
 	{
 		if(args.length < 2)
 		{
@@ -39,7 +39,8 @@ class Maze
 		}while(true);
 
 
-		Graph g = new Graph(size*size);
+		Graph g = new Graph(size*size, args[1]);
+
 
 		for(int i=0; i<size; i++)
 		{
@@ -71,10 +72,15 @@ class Graph
         // adjacency list 
         private ArrayList<Integer>[] adjList; 
                       
+	PrintStream out;
+
         //Constructor
-        public Graph(int vertices){                                       
+	public Graph(int vertices, String output){                                       
         //initialise vertex count
 	        this.v = vertices;                                                                             // initialise adjacency list
+		try{
+		this.out = new PrintStream(new File(output));
+		}catch(Exception e){;}
                 initAdjList(); 
 	}
                                                                                          
@@ -113,7 +119,17 @@ class Graph
 	        isVisited[u] = true;                 
 	        if (u.equals(d)) 
 	        {
-			System.out.println(localPathList);
+			//System.out.println(localPathList);
+			for(int i=0; i<localPathList.size(); i++)
+			{
+				if(i != localPathList.size()-1)
+				out.print(localPathList.get(i)+"-");
+				else
+				out.print(localPathList.get(i));
+
+			}
+			out.print("\n");
+
 	        }
 		// Recur for all the vertices
                 // adjacent to current vertex
